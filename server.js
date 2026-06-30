@@ -1,26 +1,41 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
+const porta = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Essa função roda assim que o servidor liga
-async function listarModelos() {
+// Usando o modelo mais atual e estável
+const modeloBase = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash-002" 
+});
+
+app.post('/api/chat', async (req, res) => {
     try {
-        console.log("--- LISTANDO MODELOS DISPONÍVEIS ---");
-        const models = await genAI.listModels();
-        models.models.forEach(m => {
-            console.log(`Nome: ${m.name}, Suporta gerar conteúdo: ${m.supportedGenerationMethods.includes('generateContent')}`);
+        const { historico, mensagem } = req.body;
+        
+        // Criamos o chat com o histórico enviado pelo cliente
+        const chat = modeloBase.startChat({
+            history: historico || [],
         });
-        console.log("--- FIM DA LISTA ---");
-    } catch (e) {
-        console.error("Erro ao listar modelos:", e);
+
+        const resultado = await chat.sendMessage(mensagem);
+        const respostaIA = resultado.response.text();
+
+        res.json({ resposta: respostaIA });
+
+    } catch (erro) {
+        console.error("Erro no Gemini:", erro);
+        res.status(500).json({ erro: 'Erro ao processar a mensagem.' });
     }
-}
+});
 
-listarModelos();
-
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Servidor rodando e verificando modelos...`);
+app.listen(porta, () => {
+    console.log(`Servidor rodando na porta ${porta}`);
 });
