@@ -7,9 +7,7 @@ const app = express();
 const porta = process.env.PORT || 3000;
 
 // Configuração de Segurança (Permite apenas o seu site fazer requisições)
-app.use(cors({
-    origin: 'https://seusite.com' // Substitua pelo domínio da Sandi Web
-}));
+app.use(cors());
 app.use(express.json());
 
 // Inicializa a API do Gemini
