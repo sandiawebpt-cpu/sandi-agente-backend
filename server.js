@@ -15,7 +15,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Configuração do Agente e Regras de Negócio (System Prompt)
 const modeloBase = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash", // Modelo rápido e econômico para chats
+    model: "gemini-1.5-flash-latest", // Modelo rápido e econômico para chats
     systemInstruction: `Você é o assistente virtual da agência Sandi Web. 
     Seu tom é profissional, direto e focado em conversão. 
     O foco da agência é o modelo de assinatura WaaS (Website as a Service), oferecendo manutenção contínua e desenvolvimento web. 
