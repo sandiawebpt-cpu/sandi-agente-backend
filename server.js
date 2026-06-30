@@ -9,19 +9,18 @@ const porta = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Inicializa a IA com a chave que está configurada no Render
+// Inicializa a IA
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Modelo mais estável e universal atualmente
-const modeloBase = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash-002" 
-});
+// Usamos o modelo padrão de entrada (flash). 
+// Se você criou um projeto novo, este modelo DEVE funcionar.
+const modeloBase = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 app.post('/api/chat', async (req, res) => {
     try {
         const { historico, mensagem } = req.body;
         
-        // Inicia o chat mantendo o histórico
+        // Mantemos o histórico simples
         const chat = modeloBase.startChat({
             history: historico || [],
         });
@@ -32,11 +31,11 @@ app.post('/api/chat', async (req, res) => {
         res.json({ resposta: respostaIA });
 
     } catch (erro) {
-        console.error("Erro no Gemini:", erro);
-        res.status(500).json({ erro: 'Erro ao processar a mensagem.' });
+        console.error("Erro Final:", erro);
+        res.status(500).json({ erro: 'Falha na IA. Verifique as configurações do projeto.' });
     }
 });
 
 app.listen(porta, () => {
-    console.log(`Servidor rodando na porta ${porta}`);
+    console.log(`Servidor ativo.`);
 });
