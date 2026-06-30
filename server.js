@@ -9,9 +9,10 @@ const porta = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Inicializa a IA com a chave que está configurada no Render
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Usando o modelo mais atual e estável
+// Modelo mais estável e universal atualmente
 const modeloBase = genAI.getGenerativeModel({
     model: "gemini-1.5-flash-002" 
 });
@@ -20,7 +21,7 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { historico, mensagem } = req.body;
         
-        // Criamos o chat com o histórico enviado pelo cliente
+        // Inicia o chat mantendo o histórico
         const chat = modeloBase.startChat({
             history: historico || [],
         });
